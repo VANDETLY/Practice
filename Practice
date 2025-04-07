@@ -1,0 +1,259 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+int printMainMenu();
+void pressEnterToContinue();
+struct Worker
+{
+    int id;
+    string name;
+    char gender;
+    float hours, wage;
+
+    void input()
+    {
+        cout << "-----------[ Input Worker Info]------------" << endl;
+        cout << "\tEnter Worker ID : ";
+        cin >> id;
+        cout << "\tEnter Worker Name : ";
+        cin.ignore();
+        getline(cin, name);
+        cout << "\tEnter Worker Gender : ";
+        cin >> gender;
+        cout << "\tEnter Worker Hours: ";
+        cin >> hours;
+        cout << "\tEnter Worker Wages: ";
+        cin >> wage;
+    }
+    void Update()
+    {
+        cout << "-----------[ Input Worker Info]------------" << endl;
+        cout << "\tEnter Worker Name : ";
+        cin.ignore();
+        getline(cin, name);
+        cout << "\tEnter Worker Gender : ";
+        cin >> gender;
+        cout << "\tEnter Worker Hours: ";
+        cin >> hours;
+        cout << "\tEnter Worker Wages: ";
+        cin >> wage;
+    }
+    void output()
+    {
+        cout << "\tWorker ID : " << id << endl;
+        cout << "\tWorker Name: " << name << endl;
+        cout << "\tWorker Gender: " << gender << endl;
+        cout << "\tWorker Wage: " << wage << "$" << endl;
+        cout << "\tWorker Hours: " << hours << "hrs" << endl;
+        cout << "\tWorker Salary:" << findSalary() << "$" << endl;
+    }
+    float findSalary() { return hours * wage; }
+};
+
+int searchWorkerById(Worker workers[], int counter)
+{
+    int workerId;
+    cout << "Enter Worker ID to search: ";
+    cin >> workerId;
+
+    int foundIndex = -1;
+    for (int i = 0; i < counter; i++)
+    {
+        if (workerId == workers[i].id)
+        {
+            // found !!
+            foundIndex = i;
+            cout << "=--------<<Output Worker Information>>--------=" << endl;
+            workers[i].output();
+        }
+    }
+    if (foundIndex == -1)
+    {
+        cout << "Worker record with id = "
+             << workerId << " doesn't exist ! "
+             << endl;
+    }
+
+    return foundIndex;
+}
+void initWorkers(Worker workers[])
+{
+    workers[0] = {1001, "Jonh cena ", 'm', 100, 90};
+    workers[1] = {1002, "Jonh smith ", 'm', 99, 90};
+    workers[2] = {1003, "Romen Range ", 'm', 10, 99};
+}
+void printWorkers(Worker workers[], int counter)
+{
+    cout << " << All Workers Info >> " << endl;
+    for (int i = 0; i < counter; i++)
+    {
+        workers[i].output();
+        cout << "/t------------------------" << endl;
+    }
+}
+bool workerIdComparater(Worker a, Worker b)
+{
+    return a.id < b.id;
+}
+bool salaryComparater(Worker a, Worker b)
+{
+    return a.findSalary() > b.findSalary();
+}
+int main()
+{
+
+    system("cls");
+    int option;
+
+    // in order to store many worker
+    int n = 20;
+    Worker workers[n];
+    int counter = 0;
+    do
+    {
+        option = printMainMenu();
+        system("cls");
+        switch (option)
+        {
+        case 1:
+            if (counter >= n)
+            {
+                cout << "Worker System is full ! Try delete some data..."
+                     << endl;
+                break;
+            }
+            workers[counter++].input();
+            cout << "==> Successfuly added a new worker! " << endl;
+            break;
+        case 2:
+        {
+            // Search to find the existing records first
+            // Ask for new value update && update it!
+            if (counter == 0)
+            {
+                cout << " There is no worker to search!! " << endl;
+                break;
+            }
+            int foundIndex = searchWorkerById(workers, counter);
+            workers[foundIndex].Update();
+            cout << "Records has been update successfully!!! " << endl;
+        }
+        break;
+        case 3:
+        {
+            if (counter == 0)
+            {
+                cout << "There is no worker to search !!" << endl;
+                break;
+            }
+            searchWorkerById(workers, counter);
+        }
+        break;
+        case 4:
+        {
+            // Use to delete the records
+            if (counter == 0)
+            {
+                cout << "There is no records in the system..." << endl;
+                break;
+            }
+            int foundIndex = searchWorkerById(workers, counter);
+            if (foundIndex >= 0)
+            {
+                // write algorithm(a solution to solve the result ) to delete
+                for (int i = foundIndex; i < counter - 1; i++)
+                {
+                    workers[i] = workers[i + 1];
+                }
+                counter--;
+                cout << "Worker delted successfully " << endl;
+            }
+        }
+        case 5:
+        {
+            if (counter == 0)
+            {
+                cout << "==> there is no workers in the system..!" << endl;
+                break;
+            }
+            int showOption;
+            while (true)
+            {
+
+                cout << "------------------[ Show Worker Info ]----------------" << endl;
+                cout << "1. Show Ascending Order By ID " << endl;
+                cout << " 2. Show descending order by Salary " << endl;
+                cout << "==> Choose fro 1 - 2 or 0 to quit ... !!!" << endl;
+                cin >> showOption;
+            }
+            if (showOption == 0)
+            {
+                cout << "Exit from the show option... !! " << endl;
+                break;
+            }
+            else if (showOption == 1)
+            {
+                sort(workers, workers + counter, workerIdComparater);
+                printWorkers(workers, counter);
+            }
+            else if (showOption == 2)
+            {
+                // sort by slary
+                sort(workers, workers + counter, salaryComparater);
+                printWorkers(workers, counter);
+            }
+        }
+        break;
+            cout << "--------<< All Workers Info>>---------" << endl;
+            for (int i = 0; i < counter; i++)
+            {
+                workers[i].output();
+                cout << "\t------------------------------" << endl;
+            }
+            break;
+
+        case 6:
+            cout << "Exit from the program!! Thank you !! " << endl;
+            break;
+        default:
+            cout << "Invalid option !! Choose again!! " << endl;
+            break;
+        }
+        pressEnterToContinue();
+    } while (option != 6);
+
+    return 0;
+}
+void logo()
+{
+    cout << "__        __         _                                        " << endl;
+    cout << "\\ \\      / /__  _ __| | _____ _ __                            " << endl;
+    cout << " \\ \\ /\\ / / _ \\| '__| |/ / _ \\ '__|                           " << endl;
+    cout << "  \\ V  V / (_) | |  |   <  __/ |                              " << endl;
+    cout << " __\\_/\\_/ \\___/|_|  |_|\\_\\___|_|                          _   " << endl;
+    cout << "|  \\/  | __ _ _ __   __ _  __ _  ___ _ __ ___   ___ _ __ | |_ " << endl;
+    cout << "| |\\/| |/ _` | '_ \\ / _` |/ _` |/ _ \\ '_ ` _ \\ / _ \\ '_ \\| __|" << endl;
+    cout << "| |  | | (_| | | | | (_| | (_| |  __/ | | | | |  __/ | | | |_ " << endl;
+    cout << "|_|  |_|\\__,_|_| |_|\\__,_|\\__, |\\___|_| |_| |_|\\___|_| |_|\\__|" << endl;
+    cout << "                          |___/                               " << endl;
+}
+void pressEnterToContinue()
+{
+    cout << "--------------<<Press Enter to continue >> ----------------" << endl;
+    cin.ignore();
+    cin.get();
+}
+int printMainMenu()
+{
+    int option;
+    logo();
+    cout << "\t1. Add New Worker " << endl;
+    cout << "\t2. Edit Worker Information" << endl;
+    cout << "\t3. Search Worker Information" << endl;
+    cout << "\t4. Delete Worker Information " << endl;
+    cout << "\t5. Show workers " << endl;
+    cout << "\t6. Exit " << endl;
+    cout << ">>> Choose your option : ";
+    cin >> option;
+    return option;
+}
